@@ -1,0 +1,127 @@
+version: 2.1
+
+jobs:
+  # Prebuild
+  prebuild:
+    docker:
+      - image: node:12.13
+    steps:
+      - checkout
+      - run:
+          name: Prebuild
+          command: |
+            export NODE_OPTIONS=--max_old_space_size=8192
+            npm install
+            apt-get update && apt-get install -y zip
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+            
+  # Build Angular
+  build:
+    docker:
+      - image: node:12.13
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build Angular
+          command: |
+            npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+      - store_artifacts:
+          path: dist
+          destination: dist
+
+  # Unit Testing using Karma
+  unit-test:
+    docker:
+      - image: node:12.13
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Unit Testing using Karma
+          command: |
+            apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+            curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+            apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto ttf-freefont --no-install-recommends
+            apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+            apt-get update -y && apt-get install -y && apt-get install -y apt-utils && apt-get install -y --no-install-recommends apt-utils apt-get install -y default-jre && apt install -y iceweasel && apt install -y fonts-liberation && apt install -y libappindicator3-1 && apt install -y libxss1 && apt install -y lsb-release && apt install -y xdg-utils && apt install -y net-tools
+            apt-get update && apt-get install -y openjdk-8-jre-headless && apt-get install -y ca-certificates-java
+            npm run test
+      - store_artifacts:
+          path: reports
+          destination: reports
+
+  # E2E Testing using Protractor
+  e2e:
+    docker:
+      - image: node:12.13
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: E2E Testing using Protractor
+          command: |
+            apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+            curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+            apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto ttf-freefont --no-install-recommends
+            apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+            npm install protractor
+            node node_modules/protractor/bin/webdriver-manager update
+            npm run e2e
+      - store_artifacts:
+          path: reports
+          destination: reports
+
+  # Deploy to AWS
+  deploy:
+    docker:
+      - image: node:12.13
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy to AWS
+          command: |
+            # export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEV01
+            # export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEV01
+            apt-get update && apt-get -y install python-dev
+            curl -O https://bootstrap.pypa.io/get-pip.py
+            python get-pip.py
+            pip install awscli --upgrade
+            python --version
+            pip --help
+            aws --version
+            # aws s3 sync ./dist/meantoo s3://meantoo.elkay.com --sse AES256 --delete
+            # pipe: atlassian/aws-cloudfront-invalidate:0.1.2
+            # variables:
+            #   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            #   AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            #   AWS_DEFAULT_REGION: 'us-west-2'
+            #   DISTRIBUTION_ID: 'ASDFASDFASDAFA'
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - prebuild
+      - build:
+          requires:
+            - prebuild
+      - unit-test:
+          requires:
+            - build
+      - e2e:
+          requires:
+            - build
+      - deploy:
+          type: approval
+          requires:
+            - unit-test
+            - e2e

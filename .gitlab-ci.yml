@@ -1,0 +1,106 @@
+image: node:10.15
+
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - node_modules/
+    - dist/
+    - reports/
+
+stages:
+  - Prebuild
+  - Build
+  - Unit Test
+  - E2E
+  - CI Status
+  - Deploy
+
+success:
+  stage: ci_status
+  before_script:
+    - ""
+  after_script:
+    - ""
+  script:
+    - BUILD_STATUS=passed BUILD_KEY=push ./build_status
+  when: on_success
+
+failure:
+  stage: ci_status
+  before_script:
+    - ""
+  after_script:
+    - ""
+  script:
+    - BUILD_STATUS=failed BUILD_KEY=push ./build_status
+  when: on_failure
+
+# Prebuild
+Prebuild:
+  stage: Prebuild
+  script:
+    - export NODE_OPTIONS=--max_old_space_size=8192
+    - npm install
+    - apt-get update && apt-get install -y zip
+
+# Build Angular
+Build:
+  stage: Build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+# Unit Testing using Karma
+UnitTest:
+  stage: Unit Test
+  script:
+    - apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+    - curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+    - apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto ttf-freefont --no-install-recommends
+    - apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+    - apt-get update -y && apt-get install -y && apt-get install -y apt-utils && apt-get install -y --no-install-recommends apt-utils apt-get install -y default-jre && apt install -y iceweasel && apt install -y fonts-liberation && apt install -y libappindicator3-1 && apt install -y libxss1 && apt install -y lsb-release && apt install -y xdg-utils && apt install -y net-tools
+    - apt-get update && apt-get install -y openjdk-8-jre-headless && apt-get install -y ca-certificates-java
+    - npm run test
+  artifacts:
+    paths:
+      - reports/
+
+# E2E Testing using Protractor
+E2E:
+  stage: E2E
+  script:
+    - apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+    - curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+    - apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto ttf-freefont --no-install-recommends
+    - apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+    - npm install protractor
+    - node node_modules/protractor/bin/webdriver-manager update
+    - npm run e2e
+  artifacts:
+    paths:
+      - reports/
+
+# Deploy to AWS
+Deploy:
+  stage: Deploy
+  when: manual
+  script:
+    # - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEV01
+    # - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEV01
+    - apt-get update && apt-get -y install python-dev
+    - curl -O https://bootstrap.pypa.io/get-pip.py
+    - python get-pip.py
+    - pip install awscli --upgrade
+    - python --version
+    - pip --help
+    - aws --version
+    # - aws s3 sync ./dist/meantoo s3://meantoo.elkay.com --sse AES256 --delete
+    # - pipe: atlassian/aws-cloudfront-invalidate:0.1.2
+    #   variables:
+    #     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    #     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    #     AWS_DEFAULT_REGION: 'us-west-2'
+    #     DISTRIBUTION_ID: 'ASDFASDFASDAFA'
