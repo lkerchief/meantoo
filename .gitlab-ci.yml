@@ -1,4 +1,4 @@
-image: cimg/node:latest
+image: node:10.15
 
 cache:
   untracked: true
