@@ -1,10 +1,10 @@
-version: 2.0
+version: 2.1
 
 jobs:
   # Prebuild
   prebuild:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:12.16
     steps:
       - checkout
       - run:
@@ -21,7 +21,7 @@ jobs:
   # Build Angular
   build:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:12.16
     steps:
       - attach_workspace:
           at: .
@@ -40,7 +40,7 @@ jobs:
   # Unit Testing using Karma
   unit-test:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:12.16
     steps:
       - attach_workspace:
           at: .
@@ -61,7 +61,7 @@ jobs:
   # E2E Testing using Protractor
   e2e:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:12.16
     steps:
       - attach_workspace:
           at: .
@@ -82,7 +82,7 @@ jobs:
   # Deploy to AWS
   deploy:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:12.16
     steps:
       - attach_workspace:
           at: .
