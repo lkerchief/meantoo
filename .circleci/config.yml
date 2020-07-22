@@ -32,6 +32,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Build Angular
           command: |
@@ -51,6 +54,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Unit Testing using Karma
           command: |
@@ -72,6 +78,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: E2E Testing using Protractor
           command: |
