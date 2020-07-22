@@ -5,6 +5,7 @@ jobs:
   prebuild:
     docker:
       - image: node:12.13 # cimg/node:12.13
+    resource_class: xlarge
     steps:
       - checkout
       # - restore_cache:
@@ -29,6 +30,7 @@ jobs:
   build:
     docker:
       - image: node:12.13
+    resource_class: xlarge
     steps:
       - attach_workspace:
           at: .
@@ -51,6 +53,7 @@ jobs:
   unit-test:
     docker:
       - image: node:12.13
+    resource_class: xlarge
     steps:
       - attach_workspace:
           at: .
@@ -75,6 +78,7 @@ jobs:
   e2e:
     docker:
       - image: node:12.13
+    resource_class: xlarge
     steps:
       - attach_workspace:
           at: .
@@ -99,6 +103,7 @@ jobs:
   deploy:
     docker:
       - image: node:12.13
+    resource_class: xlarge
     steps:
       - attach_workspace:
           at: .
