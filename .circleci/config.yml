@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  # Prebuild
+  # Prebuild tasks
   prebuild:
     docker:
       - image: cimg/node:12.13
