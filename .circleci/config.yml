@@ -4,7 +4,7 @@ jobs:
   # Prebuild
   prebuild:
     docker:
-      - image: node:12.13 # cimg/node:12.13
+      - image: node:12.13
     steps:
       - checkout
       - run:
