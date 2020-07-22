@@ -4,7 +4,7 @@ jobs:
   # Prebuild
   prebuild:
     docker:
-      - image: circleci/node:12.13 # cimg/node:12.13
+      - image: node:12.13 # cimg/node:12.13 circleci/node:12.13
     # resource_class: xlarge
     steps:
       - checkout
