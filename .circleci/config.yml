@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  # Prebuild tasks
+  # Prebuild
   prebuild:
     docker:
       - image: node:12.13
