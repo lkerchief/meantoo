@@ -1,10 +1,10 @@
 version: 2.1
 
 jobs:
-  # Prebuild task
+  # Prebuild
   prebuild:
     docker:
-      - image: node:12.13 # cimg/node:12.13
+      - image: circleci/node:latest # cimg/node:12.13
     # resource_class: xlarge
     steps:
       - checkout
