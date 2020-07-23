@@ -133,7 +133,7 @@ workflows:
           requires:
             - build
       - deploy:
-          type: approval
+          type: hold
           context: Sandbox Test
           requires:
             - unit-test
