@@ -132,9 +132,14 @@ workflows:
       - e2e:
           requires:
             - build
+      - approval:
+          type: approval
+          requires:
+            - unit-test
+            - e2e
       - deploy:
-          type: hold
           context: Sandbox Test
           requires:
             - unit-test
             - e2e
+            - approval
