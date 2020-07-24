@@ -117,6 +117,9 @@ jobs:
             curl -O https://bootstrap.pypa.io/get-pip.py
             python get-pip.py
             pip install awscli --upgrade
+            python --version
+            pip --help
+            aws --version
       - aws-s3/sync:
           arguments: |
             ---sse AES256
