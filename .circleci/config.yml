@@ -105,7 +105,7 @@ jobs:
   # Deploy to AWS
   deploy:
     docker:
-      - image: circleci/python:node-browsers
+      - image: circleci/python
     # resource_class: xlarge
     steps:
       - attach_workspace:
