@@ -110,6 +110,12 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - aws-s3/sync:
+          arguments: |
+            ---sse AES256 --delete
+          from: ./dist/frontend
+          overwrite: true
+          to: 's3://sitesb01.cartus.com'
       - run:
           name: Deploy to AWS
           command: |
@@ -123,12 +129,6 @@ jobs:
             pip --help
             aws --version
             aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
-      - aws-s3/sync:
-          arguments: |
-            ---sse AES256 --delete
-          from: ./dist/frontend
-          overwrite: true
-          to: 's3://sitesb01.cartus.com'
 
 
 workflows:
