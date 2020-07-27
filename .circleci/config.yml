@@ -125,7 +125,6 @@ jobs:
             aws --version
             aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
       - aws-s3/sync:
-          context: Sandbox-Test
           arguments: |
             ---sse AES256 --delete
           from: ./dist/frontend
