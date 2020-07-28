@@ -114,24 +114,20 @@ jobs:
           context: Sandbox-Test
           name: Deploy to AWS
           command: |
-            AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
-            echo $AWS_REGION
-            echo $AWS_ACCESS_KEY
-            echo $AWS_SECRET_ACCESS_KEY
-            echo $AWS_ACCESS_KEY_ID
-      #      #python get-pip.py
-      #      pip install awscli --upgrade
-      #      python --version
-      #      pip --help
-      #      aws --version
-      #      aws configure list
-      #      aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
-      #- aws-s3/sync:
-      #    arguments: |
-      #      ---sse AES256 --delete
-      #    from: ./dist/frontend
-      #    overwrite: true
-      #    to: 's3://sitesb01.cartus.com'
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
+            export AWS_DEFAULT_REGION=$AWS_REGION
+            pip install awscli --upgrade
+            python --version
+            pip --help
+            aws --version
+            aws configure
+            aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
+      - aws-s3/sync:
+          arguments: |
+            ---sse AES256 --delete
+          from: ./dist/frontend
+          overwrite: true
+          to: 's3://sitesb01.cartus.com'
 
 
 workflows:
