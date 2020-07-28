@@ -114,15 +114,14 @@ jobs:
           context: Sandbox-Test
           name: Deploy to AWS
           command: |
-            # export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_DEV01
-            # export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_DEV01
-            #apt-get update && apt-get -y install python-dev
-            #curl -O https://bootstrap.pypa.io/get-pip.py
+            AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY
+            echo $AWS_REGION
             #python get-pip.py
             pip install awscli --upgrade
             python --version
             pip --help
             aws --version
+            aws configure list
             aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
       - aws-s3/sync:
           arguments: |
