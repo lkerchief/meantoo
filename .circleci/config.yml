@@ -4,30 +4,30 @@ orbs:
   aws-s3: circleci/aws-s3@1.0.16
 
 jobs:
-  # Prebuild
-  prebuild:
-    docker:
-      - image: node:12.13 # cimg/node:12.13 circleci/node:12.13
-    # resource_class: xlarge
-    steps:
-      - checkout
-      # - restore_cache:
-      #     keys:
-      #       - v1-deps-{{ checksum "package-lock.json" }}
-      - run:
-          name: Prebuild
-          command: |
-            export NODE_OPTIONS=--max_old_space_size=8192
-            npm install
-            apt-get update && apt-get install -y zip
-      # - save_cache:
-      #     key: v1-deps-{{ checksum "package-lock.json" }}
-      #     paths:
-      #       - node_modules
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
+  # # Prebuild
+  # prebuild:
+  #   docker:
+  #     - image: node:12.13 # cimg/node:12.13 circleci/node:12.13
+  #   # resource_class: xlarge
+  #   steps:
+  #     - checkout
+  #     # - restore_cache:
+  #     #     keys:
+  #     #       - v1-deps-{{ checksum "package-lock.json" }}
+  #     - run:
+  #         name: Prebuild
+  #         command: |
+  #           export NODE_OPTIONS=--max_old_space_size=8192
+  #           npm install
+  #           apt-get update && apt-get install -y zip
+  #     # - save_cache:
+  #     #     key: v1-deps-{{ checksum "package-lock.json" }}
+  #     #     paths:
+  #     #       - node_modules
+  #     - persist_to_workspace:
+  #         root: .
+  #         paths:
+  #           - .
 
   # Build Angular
   build:
@@ -37,13 +37,20 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      # - restore_cache:
-      #     keys:
-      #       - v1-deps-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Build Angular
           command: |
+            export NODE_OPTIONS=--max_old_space_size=8192
+            npm install
+            apt-get update && apt-get install -y zip
             npm run build
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
       - persist_to_workspace:
           root: .
           paths:
@@ -60,9 +67,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      # - restore_cache:
-      #     keys:
-      #       - v1-deps-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Unit Testing using Karma
           command: |
@@ -85,9 +92,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      # - restore_cache:
-      #     keys:
-      #       - v1-deps-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
       - run:
           name: E2E Testing using Protractor
           command: |
@@ -131,10 +138,10 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - prebuild
+      # - prebuild
       - build:
-          requires:
-            - prebuild
+          # requires:
+          #   - prebuild
       - unit-test:
           requires:
             - build
