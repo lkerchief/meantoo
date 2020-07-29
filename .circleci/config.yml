@@ -126,13 +126,13 @@ jobs:
             python --version
             pip --help
             aws --version
-            aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
-      - aws-s3/sync:
-          arguments: |
-            --delete
-          from: ./dist/frontend
-          overwrite: true
-          to: 's3://sitesb01.cartus.com'
+      #       aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
+      # - aws-s3/sync:
+      #     arguments: |
+      #       --delete
+      #     from: ./dist/frontend
+      #     overwrite: true
+      #     to: 's3://sitesb01.cartus.com'
 
 
 workflows:
