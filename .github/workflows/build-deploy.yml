@@ -1,0 +1,191 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# jobs:
+#   # This workflow contains a single job called "build"
+#   build:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
+
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#     - uses: actions/checkout@v2
+
+#     # Runs a single command using the runners shell
+#     - name: Run a one-line script
+#       run: echo Hello, world!
+
+#     # Runs a set of commands using the runners shell
+#     - name: Run a multi-line script
+#       run: |
+#         echo Add other actions to build,
+#         echo test, and deploy your project.
+
+jobs:
+  # # Prebuild
+  # prebuild:
+  #   docker:
+  #     - image: node:12.13 # cimg/node:12.13 circleci/node:12.13
+  #   # resource_class: xlarge
+  #   steps:
+  #     - checkout
+  #     # - restore_cache:
+  #     #     keys:
+  #     #       - v1-deps-{{ checksum "package-lock.json" }}
+  #     - run:
+  #         name: Prebuild
+  #         command: |
+  #           export NODE_OPTIONS=--max_old_space_size=8192
+  #           npm install
+  #           apt-get update && apt-get install -y zip
+  #     # - save_cache:
+  #     #     key: v1-deps-{{ checksum "package-lock.json" }}
+  #     #     paths:
+  #     #       - node_modules
+  #     - persist_to_workspace:
+  #         root: .
+  #         paths:
+  #           - .
+
+  # Build Angular
+  build:
+    docker:
+      - image: node:12.13
+    # resource_class: xlarge
+    steps:
+#       - attach_workspace:
+#           at: .
+#       - restore_cache:
+#           keys:
+#             - v1-deps-{{ checksum "package-lock.json" }}
+#       - checkout
+      - run:
+          name: Build Angular
+          command: |
+            export NODE_OPTIONS=--max_old_space_size=8192
+            npm install
+            apt-get update && apt-get install -y zip
+            npm run build
+#       - save_cache:
+#           key: v1-deps-{{ checksum "package-lock.json" }}
+#           paths:
+#             - node_modules
+#       - persist_to_workspace:
+#           root: .
+#           paths:
+#             - .
+#       - store_artifacts:
+#           path: dist
+#           destination: dist
+
+  # Unit Testing using Karma
+  unit-test:
+    docker:
+      - image: node:12.13
+    # resource_class: xlarge
+    steps:
+#       - attach_workspace:
+#           at: .
+#       - restore_cache:
+#           keys:
+#             - v1-deps-{{ checksum "package-lock.json" }}
+      - run:
+          name: Unit Testing using Karma
+          command: |
+            apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+            curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+            apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
+            apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+            apt-get update -y && apt-get install -y && apt-get install -y apt-utils && apt-get install -y --no-install-recommends apt-utils apt-get install -y default-jre && apt install -y iceweasel && apt install -y fonts-liberation && apt install -y libappindicator3-1 && apt install -y libxss1 && apt install -y lsb-release && apt install -y xdg-utils && apt install -y net-tools
+            apt-get update && apt-get install -y openjdk-8-jre-headless && apt-get install -y ca-certificates-java
+            npm run test
+#       - store_artifacts:
+#           path: reports
+#           destination: reports
+
+  # E2E Testing using Protractor
+  e2e:
+    docker:
+      - image: node:12.13
+    # resource_class: xlarge
+    steps:
+#       - attach_workspace:
+#           at: .
+#       - restore_cache:
+#           keys:
+#             - v1-deps-{{ checksum "package-lock.json" }}
+      - run:
+          name: E2E Testing using Protractor
+          command: |
+            apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
+            curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+            apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
+            apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
+            npm install protractor
+            node node_modules/protractor/bin/webdriver-manager update
+            npm run e2e
+#       - store_artifacts:
+#           path: reports
+#           destination: reports
+
+  # Deploy to AWS
+  deploy:
+    docker:
+      - image: node:12.13
+    # resource_class: xlarge
+    steps:
+#       - attach_workspace:
+#           at: .
+      - run:
+#           context: Sandbox-Test
+          name: Deploy to AWS
+          command: |
+            pip install awscli --upgrade
+            python --version
+            pip --help
+            aws --version
+            # aws s3 sync ./dist/frontend s3://sitesb01.cartus.com --sse AES256 --delete
+#       - aws-s3/sync:
+#           arguments: |
+#             --delete
+#           from: ./dist/frontend
+#           overwrite: true
+#           to: 's3://sitesb01.cartus.com'
+
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      # - prebuild
+      - build #:
+          # requires:
+          #   - prebuild
+      - unit-test:
+          requires:
+            - build
+      - e2e:
+          requires:
+            - build
+#       - approval:
+#           type: approval
+#           requires:
+#             - unit-test
+#             - e2e
+      - deploy:
+#           context: Sandbox Test
+          requires:
+            - unit-test
+            - e2e
+            - approval
