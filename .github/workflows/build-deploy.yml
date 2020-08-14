@@ -60,8 +60,8 @@ jobs:
 
   # Build Angular
   build:
-    docker:
-      - image: node:12.13
+    # docker:
+    runs-on: node:12.13
     # resource_class: xlarge
     steps:
 #       - attach_workspace:
@@ -91,8 +91,8 @@ jobs:
 
   # Unit Testing using Karma
   unit-test:
-    docker:
-      - image: node:12.13
+    # docker:
+    runs-on: node:12.13
     # resource_class: xlarge
     steps:
 #       - attach_workspace:
@@ -116,8 +116,8 @@ jobs:
 
   # E2E Testing using Protractor
   e2e:
-    docker:
-      - image: node:12.13
+    # docker:
+    runs-on: node:12.13
     # resource_class: xlarge
     steps:
 #       - attach_workspace:
@@ -141,8 +141,8 @@ jobs:
 
   # Deploy to AWS
   deploy:
-    docker:
-      - image: node:12.13
+    # docker:
+    runs-on: node:12.13
     # resource_class: xlarge
     steps:
 #       - attach_workspace:
