@@ -111,7 +111,7 @@ jobs:
             sudo apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
             sudo apt-get update -y && apt-get install -y && apt-get install -y apt-utils && apt-get install -y --no-install-recommends apt-utils apt-get install -y default-jre && apt install -y iceweasel && apt install -y fonts-liberation && apt install -y libappindicator3-1 && apt install -y libxss1 && apt install -y lsb-release && apt install -y xdg-utils && apt install -y net-tools
             sudo apt-get update && apt-get install -y openjdk-8-jre-headless && apt-get install -y ca-certificates-java
-            npm run test
+            sudo npm run test
 #       - store_artifacts:
 #           path: reports
 #           destination: reports
@@ -135,9 +135,9 @@ jobs:
             sudo curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             sudo apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
             sudo apt-get purge --auto-remove -y curl gnupg && rm -rf /var/lib/apt/lists/*
-            npm install protractor
-            node node_modules/protractor/bin/webdriver-manager update
-            npm run e2e
+            sudo npm install protractor
+            sudo node node_modules/protractor/bin/webdriver-manager update
+            sudo npm run e2e
 #       - store_artifacts:
 #           path: reports
 #           destination: reports
