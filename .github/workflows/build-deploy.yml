@@ -64,16 +64,16 @@ jobs:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
-      - name: Build Angular
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
+      - name: Build Angular
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
 #       - checkout
-      - run: |
+        run: |
             export NODE_OPTIONS=--max_old_space_size=8192
             npm install
             apt-get update && apt-get install -y zip
@@ -96,15 +96,15 @@ jobs:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
-      - name: Unit Testing using Karma
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
+      - name: Unit Testing using Karma
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: |
+        run: |
             apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
@@ -122,15 +122,15 @@ jobs:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
-      - name: E2E Testing using Protractor
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
+      - name: E2E Testing using Protractor
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
-      - run: |
+        run: |
             apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
@@ -148,12 +148,12 @@ jobs:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
-      - name: Deploy to AWS
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
+      - name: Deploy to AWS
 #       - attach_workspace:
 #           at: .
-      - run: |
+        run: |
             pip install awscli --upgrade
             python --version
             pip --help
