@@ -61,18 +61,19 @@ jobs:
   # Build Angular
   build:
     # docker:
-    runs-on: node:12.13
+    runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
+      - name: Build Angular
+      - uses: docker://node:12.13
+      - uses: actions/checkout@v2
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
 #       - checkout
-      - run:
-          name: Build Angular
-          command: |
+      - run: |
             export NODE_OPTIONS=--max_old_space_size=8192
             npm install
             apt-get update && apt-get install -y zip
@@ -92,17 +93,18 @@ jobs:
   # Unit Testing using Karma
   unit-test:
     # docker:
-    runs-on: node:12.13
+    runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
+      - name: Unit Testing using Karma
+      - uses: docker://node:12.13
+      - uses: actions/checkout@v2
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
-      - run:
-          name: Unit Testing using Karma
-          command: |
+      - run: |
             apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
@@ -117,17 +119,18 @@ jobs:
   # E2E Testing using Protractor
   e2e:
     # docker:
-    runs-on: node:12.13
+    runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
+      - name: E2E Testing using Protractor
+      - uses: docker://node:12.13
+      - uses: actions/checkout@v2
 #       - attach_workspace:
 #           at: .
 #       - restore_cache:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
-      - run:
-          name: E2E Testing using Protractor
-          command: |
+      - run: |
             apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             apt-get update && apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
@@ -142,15 +145,15 @@ jobs:
   # Deploy to AWS
   deploy:
     # docker:
-    runs-on: node:12.13
+    runs-on: ubuntu-18.04
     # resource_class: xlarge
     steps:
+      - name: Deploy to AWS
+      - uses: docker://node:12.13
+      - uses: actions/checkout@v2
 #       - attach_workspace:
 #           at: .
-      - run:
-#           context: Sandbox-Test
-          name: Deploy to AWS
-          command: |
+      - run: |
             pip install awscli --upgrade
             python --version
             pip --help
@@ -164,28 +167,28 @@ jobs:
 #           to: 's3://sitesb01.cartus.com'
 
 
-workflows:
-  version: 2
-  build-test-deploy:
-    jobs:
-      # - prebuild
-      - build #:
-          # requires:
-          #   - prebuild
-      - unit-test:
-          requires:
-            - build
-      - e2e:
-          requires:
-            - build
-#       - approval:
-#           type: approval
+# workflows:
+#   version: 2
+#   build-test-deploy:
+#     jobs:
+#       # - prebuild
+#       - build #:
+#           # requires:
+#           #   - prebuild
+#       - unit-test:
+#           requires:
+#             - build
+#       - e2e:
+#           requires:
+#             - build
+# #       - approval:
+# #           type: approval
+# #           requires:
+# #             - unit-test
+# #             - e2e
+#       - deploy:
+# #           context: Sandbox Test
 #           requires:
 #             - unit-test
 #             - e2e
-      - deploy:
-#           context: Sandbox Test
-          requires:
-            - unit-test
-            - e2e
-            - approval
+#             - approval
