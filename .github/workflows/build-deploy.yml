@@ -78,6 +78,11 @@ jobs:
             npm install
             apt-get update && apt-get install -y zip
             npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: node_modules
+          path: node_modules
 #       - save_cache:
 #           key: v1-deps-{{ checksum "package-lock.json" }}
 #           paths:
@@ -99,6 +104,10 @@ jobs:
     steps:
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules
       - name: Unit Testing using Karma
 #       - attach_workspace:
 #           at: .
@@ -106,6 +115,7 @@ jobs:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
         run: |
+            npm install -g @angular/cli
             npm run test
 #            sudo rm -rf /var/lib/apt/lists/lock
 #            sudo rm -rf /var/lib/dpkg/lock-frontend
