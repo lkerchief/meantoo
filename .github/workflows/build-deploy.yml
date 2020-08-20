@@ -115,7 +115,7 @@ jobs:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
         run: |
-            npm install -g @angular/cli
+            sudo npm install -g @angular/cli
             npm run test
 #            sudo rm -rf /var/lib/apt/lists/lock
 #            sudo rm -rf /var/lib/dpkg/lock-frontend
