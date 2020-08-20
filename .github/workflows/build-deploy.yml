@@ -105,6 +105,8 @@ jobs:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
         run: |
+            sudo rm -rf /var/lib/apt/lists/lock
+            sudo rm -rf /var/lib/dpkg/lock-frontend
             sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             sudo curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             sudo apt-get update && sudo apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
@@ -131,6 +133,8 @@ jobs:
 #           keys:
 #             - v1-deps-{{ checksum "package-lock.json" }}
         run: |
+            sudo rm -rf /var/lib/apt/lists/lock
+            sudo rm -rf /var/lib/dpkg/lock-frontend
             sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
             sudo curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
             sudo apt-get update && sudo apt-get install -y google-chrome-stable fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto --no-install-recommends
