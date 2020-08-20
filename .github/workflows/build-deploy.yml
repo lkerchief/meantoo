@@ -95,6 +95,7 @@ jobs:
     # docker:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
+    needs: build
     steps:
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
@@ -123,6 +124,7 @@ jobs:
     # docker:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
+    needs: unit-test
     steps:
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
@@ -151,6 +153,7 @@ jobs:
     # docker:
     runs-on: ubuntu-18.04
     # resource_class: xlarge
+    needs: e2e
     steps:
       - uses: docker://node:12.13
       - uses: actions/checkout@v2
